@@ -8,6 +8,10 @@ var app = require('../app');
 var debug = require('debug')('endpoint:server');
 var http = require('http');
 
+require('dotenv').config()
+var explorationsDAO = require('../dao/explorationsDAO');
+const MongoClient = require('mongodb').MongoClient;
+
 /**
  * Get port from environment and store in Express.
  */
@@ -24,10 +28,17 @@ var server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
+MongoClient.connect(process.env.EVA_SERVER, { useNewUrlParser: true, useUnifiedTopology: true })
+.then(async client => {
+  await explorationsDAO.setDB(client);
 
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+  server.listen(port, () => console.log(`Listening in port ${port}`));
+  server.on('error', onError);
+  server.on('listening', onListening);
+}).catch((err) => {
+    console.error(err.stack)
+    process.exit(1)
+})
 
 /**
  * Normalize a port into a number, string, or false.
