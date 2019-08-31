@@ -9,7 +9,7 @@ var debug = require('debug')('endpoint:server');
 var http = require('http');
 
 require('dotenv').config()
-var explorationsDAO = require('../dao/explorationsDAO');
+var bookingsDAO = require('../dao/bookingsDAO');
 const MongoClient = require('mongodb').MongoClient;
 
 /**
@@ -30,7 +30,7 @@ var server = http.createServer(app);
  */
 MongoClient.connect(process.env.EVA_SERVER, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(async client => {
-  await explorationsDAO.setDB(client);
+  await bookingsDAO.setDB(client);
 
   server.listen(port, () => console.log(`Listening in port ${port}`));
   server.on('error', onError);
