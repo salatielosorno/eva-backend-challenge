@@ -16,11 +16,12 @@ module.exports = class bookingsDAO {
     static async getBookings(
         filters = null,
         page = 1,
-        perpages = 1000
+        perpage = 1000
     ) {
         try {
 
-            let skip = page == 1 ? 0 : (page - 1) * perpages;
+            let skip = Math.floor(page) == 1 ? 0 : (Math.floor(page) - 1) * Math.floor(perpage);
+            let limit = Math.floor(perpage) * 1;
 
             const match = {
                 $match: filters
@@ -54,7 +55,7 @@ module.exports = class bookingsDAO {
                         {
                             '$skip': skip
                         }, {
-                            '$limit': perpages
+                            '$limit': limit
                         }
                     ]
                 }
@@ -92,10 +93,10 @@ module.exports = class bookingsDAO {
 
             let totalPaginas;
 
-            if(totalRegisters == 1 || totalRegisters <= perpages)
+            if(totalRegisters == 1 || totalRegisters <= perpage)
                 totalPaginas = 1;
             else
-                totalPaginas = totalRegisters % perpages > 1 ? Math.floor(totalRegisters / perpages) + 1 : totalRegisters / perpages;
+                totalPaginas = totalRegisters % perpage > 1 ? Math.floor(totalRegisters / perpage) + 1 : totalRegisters / perpage;
 
             const totalpages = totalPaginas;
 
@@ -110,11 +111,12 @@ module.exports = class bookingsDAO {
         medications = null,
         filters = null,
         page = 1,
-        perpages = 1000
+        perpage = 1000
     ) {
         try {
 
-            let skip = page == 1 ? 0 : (page - 1) * perpages;
+            let skip = Math.floor(page) == 1 ? 0 : (Math.floor(page) - 1) * Math.floor(perpage);
+            let limit = Math.floor(perpage) * 1;
 
             const match = {
                 $match: filters
@@ -151,7 +153,7 @@ module.exports = class bookingsDAO {
                         {
                             '$skip': skip
                         }, {
-                            '$limit': perpages
+                            '$limit': limit
                         }
                     ]
                 }
@@ -191,10 +193,10 @@ module.exports = class bookingsDAO {
 
             let totalPaginas;
 
-            if(totalRegisters == 1 || totalRegisters <= perpages)
+            if(totalRegisters == 1 || totalRegisters <= perpage)
                 totalPaginas = 1;
             else
-                totalPaginas = totalRegisters % perpages > 1 ? Math.floor(totalRegisters / perpages) + 1 : totalRegisters / perpages;
+                totalPaginas = totalRegisters % perpage > 1 ? Math.floor(totalRegisters / perpage) + 1 : totalRegisters / perpage;
 
             const totalpages = totalPaginas;
 

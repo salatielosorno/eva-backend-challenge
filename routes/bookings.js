@@ -2,17 +2,20 @@ var bookingsDAO = require('../dao/bookingsDAO');
 var express = require('express');
 var router = express.Router();
 /**
-    * @api {get} /bookings?medication[]=:medication&mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page Get bookings by ConsumedMedications
-    * @apiDescription Este método permite obtener las citas en bloques de 1000 registros a la vez.
+    * @api {get} /bookings?medication[]=:medication&mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page&perpage=:perpage Get bookings by ConsumedMedications
+    * @apiDescription Permite listado de citas. Esta estructura exige el parámetro medication como obligatorio.
     * @apiGroup Bookings
     * @apiParam {String[]} medication Medicamento - Repetir estructura por cada medicamento
     * @apiParam {String="STRICT","LAX"} [mode=STRICT] Modo de consumo de medicamento
     * @apiParam {String} [clinic] Nombre de la clinica
     * @apiParam {String} [startframetime] Fecha de inicio en formato ISO 8601
     * @apiParam {String} [endframetime] Fecha de fin en formato ISO 8601
-    * @apiParam {String} [page=1] Pagina
-    * @apiExample {curl} Example usage:
+    * @apiParam {Number} [page=1] Pagina
+    * @apiParam {Number} [perpage=1000] Registro por página
+    * @apiExample {curl} Example:
     *   GET /bookings?medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&clinic=EXPLANADA&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z
+    * @apiExample {curl} Example using pagination:
+    *   GET /bookings?medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&clinic=EXPLANADA&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z&page=10&perpage=100
     * @apiSuccess (201) {Object[]} Bookings Lista de citas
     * @apiSuccess (201) {String}    Booking.name Nombre completo del cliente
     * @apiSuccess (201) {String}    Booking.email  Email del cliente
@@ -21,11 +24,11 @@ var router = express.Router();
     * @apiSuccess (201) {String[]}  Booking.medication Lista de medicamentos consumidos
     * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 201 OK
- *     headers [{
+ *     headers [
  *          eva-total:22,
  *          eva-pages: 1,
  *          eva-page: 1
- *     }]
+ *     ]
  *     body [
  *       {
  *          "id": 3210,
@@ -63,10 +66,15 @@ router.get('/', async function (req, res, next) {
 
     matchMedications = getMedicationConsumed(req.query.mode, req.query.medication);
 
+    let perpage = 1000;
+
+    if(req.query.perpage)
+        perpage = req.query.perpage;
+
     let response;
 
     if (req.query.page)
-        response = await bookingsDAO.getBookingsByConsumedMedications(matchMedications, match, req.query.page);
+        response = await bookingsDAO.getBookingsByConsumedMedications(matchMedications, match, req.query.page, perpage);
     else
         response = await bookingsDAO.getBookingsByConsumedMedications(matchMedications, match);
 
@@ -94,10 +102,15 @@ router.get('/', async function (req, res, next) {
 
     matchMedications = getMedicationConsumed(req.query.mode, req.query.medication);
 
+    let perpage = 1000;
+
+    if(req.query.perpage)
+        perpage = req.query.perpage;
+
     let response;
 
     if (req.query.page)
-        response = await bookingsDAO.getBookingsByConsumedMedications(matchMedications, match, req.query.page);
+        response = await bookingsDAO.getBookingsByConsumedMedications(matchMedications, match, req.query.page, perpage);
     else
         response = await bookingsDAO.getBookingsByConsumedMedications(matchMedications, match);
 
@@ -119,10 +132,15 @@ router.get('/', async function (req, res, next) {
 
     matchMedications = getMedicationConsumed(req.query.mode, req.query.medication);
 
+    let perpage = 1000;
+
+    if(req.query.perpage)
+        perpage = req.query.perpage;
+
     let response;
 
     if (req.query.page)
-        response = await bookingsDAO.getBookingsByConsumedMedications(matchMedications, match, req.query.page);
+        response = await bookingsDAO.getBookingsByConsumedMedications(matchMedications, match, req.query.page, perpage);
     else
         response = await bookingsDAO.getBookingsByConsumedMedications(matchMedications, match);
 
@@ -139,10 +157,15 @@ router.get('/', async function (req, res, next) {
 
     matchMedications = getMedicationConsumed(req.query.mode, req.query.medication);
 
+    let perpage = 1000;
+
+    if(req.query.perpage)
+        perpage = req.query.perpage;
+
     let response;
 
     if (req.query.page)
-        response = await bookingsDAO.getBookingsByConsumedMedications(matchMedications, null, req.query.page);
+        response = await bookingsDAO.getBookingsByConsumedMedications(matchMedications, null, req.query.page, perpage);
     else
         response = await bookingsDAO.getBookingsByConsumedMedications(matchMedications);
 
@@ -152,16 +175,19 @@ router.get('/', async function (req, res, next) {
     res.status(201).json(response.bookings);
 })
 /**
-    * @api {get} /bookings?mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page Get all bookings
-    * @apiDescription Este método permite obtener las citas en bloques de 1000 registros a la vez.
+    * @api {get} /bookings?mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page&perpage=:perpage Get all bookings
+    * @apiDescription Permite listado de citas. Esta estructura no exige ningún parámetro como obligatorio.
     * @apiGroup Bookings
     * @apiParam {String="STRICT","LAX"} [mode=STRICT] Modo de consumo de medicamento
     * @apiParam {String} [clinic] Nombre de la clinica
     * @apiParam {String} [startframetime] Fecha de inicio en formato ISO 8601
     * @apiParam {String} [endframetime] Fecha de fin en formato ISO 8601
-    * @apiParam {String} [page=1] Pagina
-    * @apiExample {curl} Example usage:
-    *   GET /bookings?mode=LAX&clinic=EXPLANADA&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z&page=2
+    * @apiParam {Number} [page=1] Pagina
+    * @apiParam {Number} [perpage=1000] Registro por página
+    * @apiExample {curl} Example:
+    *   GET /bookings?mode=LAX&clinic=EXPLANADA&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z
+    * @apiExample {curl} Example using pagination:
+    *   GET /bookings?mode=LAX&clinic=EXPLANADA&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z&page=10&perpage=2000
     * @apiSuccess (201) {Object[]} Bookings Lista de citas
     * @apiSuccess (201) {String}    Booking.name Nombre completo del cliente
     * @apiSuccess (201) {String}    Booking.email  Email del cliente
@@ -170,11 +196,11 @@ router.get('/', async function (req, res, next) {
     * @apiSuccess (201) {String[]}  Booking.medication Lista de medicamentos consumidos
     * @apiSuccessExample {json} Success-Response:
  *     HTTP/1.1 201 OK
- *     headers [{
+ *     headers [
  *          eva-total:372,
  *          eva-pages: 1,
  *          eva-page: 1
- *     }]
+ *     ]
  *     body [
  *       {
  *          "id": 734,
@@ -205,10 +231,15 @@ router.get('/', async function (req, res, next) {
         }
     };
 
+    let perpage = 1000;
+
+    if(req.query.perpage)
+        perpage = req.query.perpage;
+
     let response;
 
     if (req.query.page)
-        response = await bookingsDAO.getBookings(match, req.query.page);
+        response = await bookingsDAO.getBookings(match, req.query.page, perpage);
     else
         response = await bookingsDAO.getBookings(match);
     res.append('eva-total', response.total);
@@ -222,10 +253,15 @@ router.get('/', async function (req, res, next) {
 
     match = { clinicName: req.query.clinic };
 
+    let perpage = 1000;
+
+    if(req.query.perpage)
+        perpage = req.query.perpage;
+
     let response;
 
     if (req.query.page)
-        response = await bookingsDAO.getBookings(match, req.query.page);
+        response = await bookingsDAO.getBookings(match, req.query.page, perpage);
     else
         response = await bookingsDAO.getBookings(match);
 
@@ -250,10 +286,15 @@ router.get('/', async function (req, res, next) {
         }
     };
 
+    let perpage = 1000;
+
+    if(req.query.perpage)
+        perpage = req.query.perpage;
+
     let response;
 
     if (req.query.page)
-        response = await bookingsDAO.getBookings(match, req.query.page);
+        response = await bookingsDAO.getBookings(match, req.query.page, perpage);
     else
         response = await bookingsDAO.getBookings(match);
 
@@ -265,10 +306,15 @@ router.get('/', async function (req, res, next) {
 })
 router.get('/', async function (req, res, next) {
 
+    let perpage = 1000;
+
+    if(req.query.perpage)
+        perpage = req.query.perpage;
+
     let response;
 
     if (req.query.page)
-        response = await bookingsDAO.getBookings(null, req.query.page);
+        response = await bookingsDAO.getBookings(null, req.query.page, perpage);
     else
         response = await bookingsDAO.getBookings();
 

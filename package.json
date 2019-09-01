@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "description": "",
   "apidoc": {
-    "title": "API Rest - NodeJS",
-    "url" : "https://api.github.com/v1",
+    "title": "API Rest EVA - NodeJS",
+    "url": "https://api.github.com/v1",
     "header": {
       "title": "Backend Challenge",
       "filename": "header.md"
@@ -17,7 +17,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha --timeout=100000"
+    "test": "mocha --timeout=100000",
+    "doc": "./node_modules/.bin/apidoc -i routes/ -o apidoc"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -30,6 +31,7 @@
     "serve-static": "1.14.1"
   },
   "devDependencies": {
+    "apidoc": "0.17.7",
     "chai": "4.2.0",
     "chai-http": "4.3.0",
     "dotenv": "8.1.0",

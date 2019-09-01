@@ -38,7 +38,7 @@ $ npm test
 You can generate the documentation each time you modified the endpoints, you just need to run:
 
 ```bash
-$ apidoc -i routes/ -o apidoc/
+$ npm run doc
 ```
 
 You can find the documentation in the url /[doc](http://localhost:3000/doc) when the API is running in local.

@@ -162,6 +162,7 @@ describe('Test URL\'s endpoint',() => {
             done();
         })
     })
+    //-----------------------------------------------
     it('Get all bookings by consumed medications STRICT MODE', (done) => {
         chai.request(app)
         .get('/bookings?mode=STRICT&medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS')
@@ -515,7 +516,7 @@ describe('Test URL\'s endpoint using pagination',() => {
             done();
         })
     })
-    it('Get all bookings in a specific clinic during a frame time by consumed medications STRICT MODE', (done) => {
+    it('Get all bookings in a specific clinic during a frame time by consumed medications STRICT MODE with response empty', (done) => {
         chai.request(app)
         .get('/bookings?clinic=EXPLANADA&medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&frametime[start]=2019-11-11T01:19:51.813Z&frametime[end]=2019-11-11T01:19:51.813Z')
         .end((err, res) => {
@@ -531,7 +532,7 @@ describe('Test URL\'s endpoint using pagination',() => {
             done();
         })
     })
-    it('Get all bookings in a specific frame time by consumed medications STRICT MODE', (done) => {
+    it('Get all bookings in a specific frame time by consumed medications STRICT MODE with response empty', (done) => {
         chai.request(app)
         .get('/bookings?medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&frametime[start]=2019-11-11T01:19:51.813Z&frametime[end]=2019-11-11T01:19:51.813Z')
         .end((err, res) => {
@@ -547,7 +548,7 @@ describe('Test URL\'s endpoint using pagination',() => {
             done();
         })
     })
-    it('Get all bookings in a specific clinic during a frame time', (done) => {
+    it('Get all bookings in a specific clinic during a frame time with response empty', (done) => {
         chai.request(app)
         .get('/bookings?clinic=EXPLANADA&frametime[start]=2019-11-11T01:19:51.813Z&frametime[end]=2019-11-11T01:19:51.813Z')
         .end((err, res) => {
@@ -575,6 +576,430 @@ describe('Test URL\'s endpoint using pagination',() => {
             res.should.have.a.header('eva-total', 50000);
             res.should.have.a.header('eva-pages', 50);
             res.should.have.a.header('eva-page', 51);
+
+            done();
+        })
+    })
+    //-----------------------------------------------
+    it('Get all bookings using pagination', (done) => {
+        chai.request(app)
+        .get('/bookings?page=6&perpage=2000')
+        .end((err, res) => {
+            res.should.have.status(201);
+            res.should.be.json;
+            res.body.should.be.a('array');
+
+            res.body[0].should.have.a.property('id');
+            res.body[0]["id"].should.be.a('number');
+            res.body[0]["id"].should.equals(10000);
+
+            res.body[0].should.have.a.property('name');
+            res.body[0]["name"].should.be.a('string');
+            res.body[0]["name"].should.equals('Randall Paul');
+
+            res.body[0].should.have.a.property('email');
+            res.body[0]["email"].should.be.a('string');
+            res.body[0]["email"].should.equals('randall_paul@gmail.com');
+
+            res.body[0].should.have.a.property('datetime');
+            res.body[0]["datetime"].should.be.a('string');
+            res.body[0]["datetime"].should.equals('2019-11-27T16:38:08.504Z');
+
+            res.body[0].should.have.a.property('clinicName');
+            res.body[0]["clinicName"].should.be.a('string');
+            res.body[0]["clinicName"].should.equals('SOLESTA');
+
+            res.should.have.a.header('eva-total', 50000);
+            res.should.have.a.header('eva-pages', 25);
+            res.should.have.a.header('eva-page', 6);
+
+            done();
+        })
+    })
+    it('Get all bookings in a specific clinic using pagination', (done) => {
+        chai.request(app)
+        .get('/bookings?clinic=SOLESTA&page=4&perpage=3000')
+        .end((err, res) => {
+            res.should.have.status(201);
+            res.should.be.json;
+            res.body.should.be.a('array');
+
+            res.body[0].should.have.a.property('id');
+            res.body[0]["id"].should.be.a('number');
+            res.body[0]["id"].should.equals(35831);
+
+            res.body[0].should.have.a.property('name');
+            res.body[0]["name"].should.be.a('string');
+            res.body[0]["name"].should.equals('Jack Abbott');
+
+            res.body[0].should.have.a.property('email');
+            res.body[0]["email"].should.be.a('string');
+            res.body[0]["email"].should.equals('jack_abbott@gmail.com');
+
+            res.body[0].should.have.a.property('datetime');
+            res.body[0]["datetime"].should.be.a('string');
+            res.body[0]["datetime"].should.equals('2019-11-26T15:05:33.925Z');
+
+            res.body[0].should.have.a.property('clinicName');
+            res.body[0]["clinicName"].should.be.a('string');
+            res.body[0]["clinicName"].should.equals('SOLESTA');
+
+            res.should.have.a.header('eva-total', 12575);
+            res.should.have.a.header('eva-pages', 5);
+            res.should.have.a.header('eva-page', 4);
+
+            done();
+        })
+    })
+    it('Get all bookings in a specific frame time using pagination', (done) => {
+        chai.request(app)
+        .get('/bookings?frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z&page=5&perpage=100')
+        .end((err, res) => {
+            res.should.have.status(201);
+            res.should.be.json;
+            res.body.should.be.a('array');
+
+            res.body[0].should.have.a.property('id');
+            res.body[0]["id"].should.be.a('number');
+            res.body[0]["id"].should.equals(12368);
+
+            res.body[0].should.have.a.property('name');
+            res.body[0]["name"].should.be.a('string');
+            res.body[0]["name"].should.equals('Carlos Bradley');
+
+            res.body[0].should.have.a.property('email');
+            res.body[0]["email"].should.be.a('string');
+            res.body[0]["email"].should.equals('carlos_bradley@gmail.com');
+
+            res.body[0].should.have.a.property('datetime');
+            res.body[0]["datetime"].should.be.a('string');
+            res.body[0]["datetime"].should.equals('2019-11-27T20:58:24.369Z');
+
+            res.body[0].should.have.a.property('clinicName');
+            res.body[0]["clinicName"].should.be.a('string');
+            res.body[0]["clinicName"].should.equals('EXPLANADA');
+
+            res.should.have.a.header('eva-total', 1651);
+            res.should.have.a.header('eva-pages', 17);
+            res.should.have.a.header('eva-page', 5);
+
+            done();
+        })
+    })
+    it('Get all bookings in a specific clinic and a specific frame time using pagination', (done) => {
+        chai.request(app)
+        .get('/bookings?clinic=SOLESTA&frametime[start]=2019-11-20T01:19:51.813Z&frametime[end]=2019-11-21T01:19:51.813Z&page=5&perpage=100')
+        .end((err, res) => {
+            res.should.have.status(201);
+            res.should.be.json;
+            res.body.should.be.a('array');
+
+            res.body[0].should.have.a.property('id');
+            res.body[0]["id"].should.be.a('number');
+            res.body[0]["id"].should.equals(48264);
+
+            res.body[0].should.have.a.property('name');
+            res.body[0]["name"].should.be.a('string');
+            res.body[0]["name"].should.equals('Katherine Sanders');
+
+            res.body[0].should.have.a.property('email');
+            res.body[0]["email"].should.be.a('string');
+            res.body[0]["email"].should.equals('katherine_sanders@gmail.com');
+
+            res.body[0].should.have.a.property('datetime');
+            res.body[0]["datetime"].should.be.a('string');
+            res.body[0]["datetime"].should.equals('2019-11-20T23:40:35.078Z');
+
+            res.body[0].should.have.a.property('clinicName');
+            res.body[0]["clinicName"].should.be.a('string');
+            res.body[0]["clinicName"].should.equals('SOLESTA');
+
+            res.should.have.a.header('eva-total', 415);
+            res.should.have.a.header('eva-pages', 5);
+            res.should.have.a.header('eva-page', 5);
+
+            done();
+        })
+    })
+    //-----------------------------------------------
+    it('Get all bookings by consumed medications STRICT MODE using pagination', (done) => {
+        chai.request(app)
+        .get('/bookings?mode=STRICT&medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&page=2&perpage=2000')
+        .end((err, res) => {
+            res.should.have.status(201);
+            res.should.be.json;
+            res.body.should.be.a('array');
+
+            res.body[0].should.have.a.property('id');
+            res.body[0]["id"].should.be.a('number');
+            res.body[0]["id"].should.equals(40350);
+
+            res.body[0].should.have.a.property('name');
+            res.body[0]["name"].should.be.a('string');
+            res.body[0]["name"].should.equals('Jared Williams');
+
+            res.body[0].should.have.a.property('email');
+            res.body[0]["email"].should.be.a('string');
+            res.body[0]["email"].should.equals('jared_williams@gmail.com');
+
+            res.body[0].should.have.a.property('datetime');
+            res.body[0]["datetime"].should.be.a('string');
+            res.body[0]["datetime"].should.equals('2019-11-24T02:43:57.348Z');
+
+            res.body[0].should.have.a.property('clinicName');
+            res.body[0]["clinicName"].should.be.a('string');
+            res.body[0]["clinicName"].should.equals('ANGELOPOLIS');
+
+            res.should.have.a.header('eva-total', 2460);
+            res.should.have.a.header('eva-pages', 2);
+            res.should.have.a.header('eva-page', 2);
+
+            done();
+        })
+    })
+    it('Get all bookings by consumed medications LAX MODE using pagination', (done) => {
+        chai.request(app)
+        .get('/bookings?mode=LAX&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&page=10&perpage=100')
+        .end((err, res) => {
+            res.should.have.status(201);
+            res.should.be.json;
+            res.body.should.be.a('array');
+
+            res.body[0].should.have.a.property('id');
+            res.body[0]["id"].should.be.a('number');
+            res.body[0]["id"].should.equals(1054);
+
+            res.body[0].should.have.a.property('name');
+            res.body[0]["name"].should.be.a('string');
+            res.body[0]["name"].should.equals('Vera Rhodes');
+
+            res.body[0].should.have.a.property('email');
+            res.body[0]["email"].should.be.a('string');
+            res.body[0]["email"].should.equals('vera_rhodes@gmail.com');
+
+            res.body[0].should.have.a.property('datetime');
+            res.body[0]["datetime"].should.be.a('string');
+            res.body[0]["datetime"].should.equals('2019-11-16T17:08:45.158Z');
+
+            res.body[0].should.have.a.property('clinicName');
+            res.body[0]["clinicName"].should.be.a('string');
+            res.body[0]["clinicName"].should.equals('SANTA_FE');
+
+            res.should.have.a.header('eva-total', 42515);
+            res.should.have.a.header('eva-pages', 426);
+            res.should.have.a.header('eva-page', 10);
+
+            done();
+        })
+    })
+    /********* */
+    it('Get all bookings in a specific clinic by consumed medications STRICT MODE', (done) => {
+        chai.request(app)
+        .get('/bookings?mode=STRICT&clinic=EXPLANADA&medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&page=4&perpage=100')
+        .end((err, res) => {
+            res.should.have.status(201);
+            res.should.be.json;
+            res.body.should.be.a('array');
+
+            res.body[0].should.have.a.property('id');
+            res.body[0]["id"].should.be.a('number');
+            res.body[0]["id"].should.equals(24851);
+
+            res.body[0].should.have.a.property('name');
+            res.body[0]["name"].should.be.a('string');
+            res.body[0]["name"].should.equals('Eleanor Daniel');
+
+            res.body[0].should.have.a.property('email');
+            res.body[0]["email"].should.be.a('string');
+            res.body[0]["email"].should.equals('eleanor_daniel@gmail.com');
+
+            res.body[0].should.have.a.property('datetime');
+            res.body[0]["datetime"].should.be.a('string');
+            res.body[0]["datetime"].should.equals('2019-11-06T00:20:07.653Z');
+
+            res.body[0].should.have.a.property('clinicName');
+            res.body[0]["clinicName"].should.be.a('string');
+            res.body[0]["clinicName"].should.equals('EXPLANADA');
+
+            res.should.have.a.header('eva-total', 630);
+            res.should.have.a.header('eva-pages', 7);
+            res.should.have.a.header('eva-page', 4);
+
+            done();
+        })
+    })
+    it('Get all bookings in a specific clinic by consumed medications LAX MODE', (done) => {
+        chai.request(app)
+        .get('/bookings?mode=LAX&clinic=EXPLANADA&medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&page=10&perpage=500')
+        .end((err, res) => {
+            res.should.have.status(201);
+            res.should.be.json;
+            res.body.should.be.a('array');
+
+            res.body[0].should.have.a.property('id');
+            res.body[0]["id"].should.be.a('number');
+            res.body[0]["id"].should.equals(20135);
+
+            res.body[0].should.have.a.property('name');
+            res.body[0]["name"].should.be.a('string');
+            res.body[0]["name"].should.equals('Francis Lynch');
+
+            res.body[0].should.have.a.property('email');
+            res.body[0]["email"].should.be.a('string');
+            res.body[0]["email"].should.equals('francis_lynch@gmail.com');
+
+            res.body[0].should.have.a.property('datetime');
+            res.body[0]["datetime"].should.be.a('string');
+            res.body[0]["datetime"].should.equals('2019-11-16T13:55:20.817Z');
+
+            res.body[0].should.have.a.property('clinicName');
+            res.body[0]["clinicName"].should.be.a('string');
+            res.body[0]["clinicName"].should.equals('EXPLANADA');
+
+            res.should.have.a.header('eva-total', 11199);
+            res.should.have.a.header('eva-pages', 23);
+            res.should.have.a.header('eva-page', 10);
+
+            done();
+        })
+    })
+    it('Get all bookings in a frame time by consumed medications STRICT MODE', (done) => {
+        chai.request(app)
+        .get('/bookings?medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z&page=6&perpage=10')
+        .end((err, res) => {
+            res.should.have.status(201);
+            res.should.be.json;
+            res.body.should.be.a('array');
+
+            res.body[0].should.have.a.property('id');
+            res.body[0]["id"].should.be.a('number');
+            res.body[0]["id"].should.equals(29537);
+
+            res.body[0].should.have.a.property('name');
+            res.body[0]["name"].should.be.a('string');
+            res.body[0]["name"].should.equals('Myrtle Martinez');
+
+            res.body[0].should.have.a.property('email');
+            res.body[0]["email"].should.be.a('string');
+            res.body[0]["email"].should.equals('myrtle_martinez@gmail.com');
+
+            res.body[0].should.have.a.property('datetime');
+            res.body[0]["datetime"].should.be.a('string');
+            res.body[0]["datetime"].should.equals('2019-11-27T15:03:49.369Z');
+
+            res.body[0].should.have.a.property('clinicName');
+            res.body[0]["clinicName"].should.be.a('string');
+            res.body[0]["clinicName"].should.equals('EXPLANADA');
+
+            res.should.have.a.header('eva-total', 83);
+            res.should.have.a.header('eva-pages', 9);
+            res.should.have.a.header('eva-page', 6);
+
+            done();
+        })
+    })
+    it('Get all bookings in a frame time by consumed medications LAX MODE', (done) => {
+        chai.request(app)
+        .get('/bookings?mode=LAX&medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z&page=5&perpage=150')
+        .end((err, res) => {
+            res.should.have.status(201);
+            res.should.be.json;
+            res.body.should.be.a('array');
+
+            res.body[0].should.have.a.property('id');
+            res.body[0]["id"].should.be.a('number');
+            res.body[0]["id"].should.equals(20289);
+
+            res.body[0].should.have.a.property('name');
+            res.body[0]["name"].should.be.a('string');
+            res.body[0]["name"].should.equals('Lola Logan');
+
+            res.body[0].should.have.a.property('email');
+            res.body[0]["email"].should.be.a('string');
+            res.body[0]["email"].should.equals('lola_logan@gmail.com');
+
+            res.body[0].should.have.a.property('datetime');
+            res.body[0]["datetime"].should.be.a('string');
+            res.body[0]["datetime"].should.equals('2019-11-27T12:47:56.058Z');
+
+            res.body[0].should.have.a.property('clinicName');
+            res.body[0]["clinicName"].should.be.a('string');
+            res.body[0]["clinicName"].should.equals('SOLESTA');
+
+            res.should.have.a.header('eva-total', 1504);
+            res.should.have.a.header('eva-pages', 11);
+            res.should.have.a.header('eva-page', 5);
+
+            done();
+        })
+    })
+    it('Get all bookings in a specific clinic during a frame time by consumed medications STRICT MODE', (done) => {
+        chai.request(app)
+        .get('/bookings?clinic=EXPLANADA&medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z&page=3&perpage=5')
+        .end((err, res) => {
+            res.should.have.status(201);
+            res.should.be.json;
+            res.body.should.be.a('array');
+
+            res.body[0].should.have.a.property('id');
+            res.body[0]["id"].should.be.a('number');
+            res.body[0]["id"].should.equals(28325);
+
+            res.body[0].should.have.a.property('name');
+            res.body[0]["name"].should.be.a('string');
+            res.body[0]["name"].should.equals('Lucille Ingram');
+
+            res.body[0].should.have.a.property('email');
+            res.body[0]["email"].should.be.a('string');
+            res.body[0]["email"].should.equals('lucille_ingram@gmail.com');
+
+            res.body[0].should.have.a.property('datetime');
+            res.body[0]["datetime"].should.be.a('string');
+            res.body[0]["datetime"].should.equals('2019-11-27T09:43:33.464Z');
+
+            res.body[0].should.have.a.property('clinicName');
+            res.body[0]["clinicName"].should.be.a('string');
+            res.body[0]["clinicName"].should.equals('EXPLANADA');
+
+            res.should.have.a.header('eva-total', 22);
+            res.should.have.a.header('eva-pages', 5);
+            res.should.have.a.header('eva-page', 3);
+
+            done();
+        })
+    })
+    
+    it('Get all bookings in a specific clinic during a frame time by consumed medications LAX MODE', (done) => {
+        chai.request(app)
+        .get('/bookings?mode=LAX&clinic=EXPLANADA&medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z&page=2&perpage=100')
+        .end((err, res) => {
+            res.should.have.status(201);
+            res.should.be.json;
+            res.body.should.be.a('array');
+
+            res.body[0].should.have.a.property('id');
+            res.body[0]["id"].should.be.a('number');
+            res.body[0]["id"].should.equals(14241);
+
+            res.body[0].should.have.a.property('name');
+            res.body[0]["name"].should.be.a('string');
+            res.body[0]["name"].should.equals('Russell Cobb');
+
+            res.body[0].should.have.a.property('email');
+            res.body[0]["email"].should.be.a('string');
+            res.body[0]["email"].should.equals('russell_cobb@gmail.com');
+
+            res.body[0].should.have.a.property('datetime');
+            res.body[0]["datetime"].should.be.a('string');
+            res.body[0]["datetime"].should.equals('2019-11-28T00:19:20.704Z');
+
+            res.body[0].should.have.a.property('clinicName');
+            res.body[0]["clinicName"].should.be.a('string');
+            res.body[0]["clinicName"].should.equals('EXPLANADA');
+
+            res.should.have.a.header('eva-total', 372);
+            res.should.have.a.header('eva-pages', 4);
+            res.should.have.a.header('eva-page', 2);
 
             done();
         })

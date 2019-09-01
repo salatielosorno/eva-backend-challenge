@@ -1,9 +1,9 @@
 define({ "api": [
   {
     "type": "get",
-    "url": "/bookings?medication[]=:medication&mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page",
+    "url": "/bookings?medication[]=:medication&mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page&perpage=:perpage",
     "title": "Get bookings by ConsumedMedications",
-    "description": "<p>Este método permite obtener las citas en bloques de 1000 registros a la vez.</p>",
+    "description": "<p>Permite listado de citas. Esta estructura exige el parámetro medication como obligatorio.</p>",
     "group": "Bookings",
     "parameter": {
       "fields": {
@@ -50,19 +50,32 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "String",
+            "type": "Number",
             "optional": true,
             "field": "page",
             "defaultValue": "1",
             "description": "<p>Pagina</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "perpage",
+            "defaultValue": "1000",
+            "description": "<p>Registro por página</p>"
           }
         ]
       }
     },
     "examples": [
       {
-        "title": "Example usage:",
+        "title": "Example:",
         "content": "GET /bookings?medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&clinic=EXPLANADA&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z",
+        "type": "curl"
+      },
+      {
+        "title": "Example using pagination:",
+        "content": "GET /bookings?medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&clinic=EXPLANADA&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z&page=10&perpage=100",
         "type": "curl"
       }
     ],
@@ -116,7 +129,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 201 OK\nheaders [{\n     eva-total:22,\n     eva-pages: 1,\n     eva-page: 1\n}]\nbody [\n  {\n     \"id\": 3210,\n     \"name\": \"Curtis Alexander\",\n     \"email\": \"curtis_alexander@gmail.com\",\n     \"datetime\": \"2019-11-27T21:22:41.553Z\",\n     \"clinicName\": \"EXPLANADA\",\n     \"medication\": [\n                    \"BLOOD_THINNERS\",\n                    \"COAGULANTS\",\n                    \"HORMONE_THERAPY\",\n                    \"ANTIBIOTICS\",\n                    \"VITAMINS\"\n                ]\n   }\n]",
+          "content": "HTTP/1.1 201 OK\nheaders [\n     eva-total:22,\n     eva-pages: 1,\n     eva-page: 1\n]\nbody [\n  {\n     \"id\": 3210,\n     \"name\": \"Curtis Alexander\",\n     \"email\": \"curtis_alexander@gmail.com\",\n     \"datetime\": \"2019-11-27T21:22:41.553Z\",\n     \"clinicName\": \"EXPLANADA\",\n     \"medication\": [\n                    \"BLOOD_THINNERS\",\n                    \"COAGULANTS\",\n                    \"HORMONE_THERAPY\",\n                    \"ANTIBIOTICS\",\n                    \"VITAMINS\"\n                ]\n   }\n]",
           "type": "json"
         }
       ]
@@ -124,13 +137,13 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "routes/bookings.js",
     "groupTitle": "Bookings",
-    "name": "GetBookingsMedicationMedicationModeModeClinicClinicFrametimeStartStartframetimeFrametimeEndEndframetimePagePage"
+    "name": "GetBookingsMedicationMedicationModeModeClinicClinicFrametimeStartStartframetimeFrametimeEndEndframetimePagePagePerpagePerpage"
   },
   {
     "type": "get",
-    "url": "/bookings?mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page",
+    "url": "/bookings?mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page&perpage=:perpage",
     "title": "Get all bookings",
-    "description": "<p>Este método permite obtener las citas en bloques de 1000 registros a la vez.</p>",
+    "description": "<p>Permite listado de citas. Esta estructura no exige ningún parámetro como obligatorio.</p>",
     "group": "Bookings",
     "parameter": {
       "fields": {
@@ -170,19 +183,32 @@ define({ "api": [
           },
           {
             "group": "Parameter",
-            "type": "String",
+            "type": "Number",
             "optional": true,
             "field": "page",
             "defaultValue": "1",
             "description": "<p>Pagina</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": true,
+            "field": "perpage",
+            "defaultValue": "1000",
+            "description": "<p>Registro por página</p>"
           }
         ]
       }
     },
     "examples": [
       {
-        "title": "Example usage:",
-        "content": "GET /bookings?mode=LAX&clinic=EXPLANADA&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z&page=2",
+        "title": "Example:",
+        "content": "GET /bookings?mode=LAX&clinic=EXPLANADA&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z",
+        "type": "curl"
+      },
+      {
+        "title": "Example using pagination:",
+        "content": "GET /bookings?mode=LAX&clinic=EXPLANADA&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z&page=10&perpage=2000",
         "type": "curl"
       }
     ],
@@ -236,7 +262,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 201 OK\nheaders [{\n     eva-total:372,\n     eva-pages: 1,\n     eva-page: 1\n}]\nbody [\n  {\n     \"id\": 734,\n     \"name\": \"Pauline Alexander\",\n     \"email\": \"pauline_alexander@gmail.com\",\n     \"datetime\": \"2019-11-27T15:56:30.283Z\",\n     \"clinicName\": \"EXPLANADA\",\n     \"medication\":[\n                 \"VITAMINS\",\n                 \"BLOOD_THINNERS\",\n                 \"ANTIBIOTICS\"\n             ]\n   }\n]",
+          "content": "HTTP/1.1 201 OK\nheaders [\n     eva-total:372,\n     eva-pages: 1,\n     eva-page: 1\n]\nbody [\n  {\n     \"id\": 734,\n     \"name\": \"Pauline Alexander\",\n     \"email\": \"pauline_alexander@gmail.com\",\n     \"datetime\": \"2019-11-27T15:56:30.283Z\",\n     \"clinicName\": \"EXPLANADA\",\n     \"medication\":[\n                 \"VITAMINS\",\n                 \"BLOOD_THINNERS\",\n                 \"ANTIBIOTICS\"\n             ]\n   }\n]",
           "type": "json"
         }
       ]
@@ -244,6 +270,6 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "routes/bookings.js",
     "groupTitle": "Bookings",
-    "name": "GetBookingsModeModeClinicClinicFrametimeStartStartframetimeFrametimeEndEndframetimePagePage"
+    "name": "GetBookingsModeModeClinicClinicFrametimeStartStartframetimeFrametimeEndEndframetimePagePagePerpagePerpage"
   }
 ] });
