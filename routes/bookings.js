@@ -5,6 +5,7 @@ var router = express.Router();
     * @api {get} /bookings?medication[]=:medication&mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page&perpage=:perpage Get bookings by ConsumedMedications
     * @apiDescription Permite listado de citas. Esta estructura exige el parámetro medication como obligatorio.
     * @apiGroup Bookings
+    * @apiVersion 1.0.0
     * @apiParam {String[]} medication Medicamento - Repetir estructura por cada medicamento
     * @apiParam {String="STRICT","LAX"} [mode=STRICT] Modo de consumo de medicamento
     * @apiParam {String} [clinic] Nombre de la clinica
@@ -178,6 +179,7 @@ router.get('/', async function (req, res, next) {
     * @api {get} /bookings?mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page&perpage=:perpage Get all bookings
     * @apiDescription Permite listado de citas. Esta estructura no exige ningún parámetro como obligatorio.
     * @apiGroup Bookings
+    * @apiVersion 1.0.0
     * @apiParam {String="STRICT","LAX"} [mode=STRICT] Modo de consumo de medicamento
     * @apiParam {String} [clinic] Nombre de la clinica
     * @apiParam {String} [startframetime] Fecha de inicio en formato ISO 8601

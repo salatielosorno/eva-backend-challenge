@@ -1,6 +1,6 @@
 {
   "name": "endpoint",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "",
   "apidoc": {
     "title": "API Rest EVA - NodeJS",

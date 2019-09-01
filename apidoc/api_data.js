@@ -5,6 +5,7 @@ define({ "api": [
     "title": "Get bookings by ConsumedMedications",
     "description": "<p>Permite listado de citas. Esta estructura exige el parámetro medication como obligatorio.</p>",
     "group": "Bookings",
+    "version": "1.0.0",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -134,7 +135,6 @@ define({ "api": [
         }
       ]
     },
-    "version": "0.0.0",
     "filename": "routes/bookings.js",
     "groupTitle": "Bookings",
     "name": "GetBookingsMedicationMedicationModeModeClinicClinicFrametimeStartStartframetimeFrametimeEndEndframetimePagePagePerpagePerpage"
@@ -145,6 +145,7 @@ define({ "api": [
     "title": "Get all bookings",
     "description": "<p>Permite listado de citas. Esta estructura no exige ningún parámetro como obligatorio.</p>",
     "group": "Bookings",
+    "version": "1.0.0",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -267,7 +268,6 @@ define({ "api": [
         }
       ]
     },
-    "version": "0.0.0",
     "filename": "routes/bookings.js",
     "groupTitle": "Bookings",
     "name": "GetBookingsModeModeClinicClinicFrametimeStartStartframetimeFrametimeEndEndframetimePagePagePerpagePerpage"
