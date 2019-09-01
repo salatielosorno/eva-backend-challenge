@@ -1,4 +1,4 @@
-# Eva Backend Jr Challenge
+# Backend Challenge
 
 ```
 ISSUE 01
@@ -35,7 +35,7 @@ $ npm test
 
 ## Documentation - Avaliable endpoints
 
-You can generate the documentation each time you modified the endpoints just run:
+You can generate the documentation each time you modified the endpoints, you just need to run:
 
 ```bash
 $ apidoc -i routes/ -o apidoc/
