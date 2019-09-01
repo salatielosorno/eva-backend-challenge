@@ -3,6 +3,7 @@
     "type": "get",
     "url": "/bookings?medication[]=:medication&mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page",
     "title": "Get bookings by ConsumedMedications",
+    "description": "<p>Este método permite obtener las citas en bloques de 1000 registros a la vez.</p>",
     "group": "Bookings",
     "parameter": {
       "fields": {
@@ -129,6 +130,7 @@
     "type": "get",
     "url": "/bookings?mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page",
     "title": "Get all bookings",
+    "description": "<p>Este método permite obtener las citas en bloques de 1000 registros a la vez.</p>",
     "group": "Bookings",
     "parameter": {
       "fields": {

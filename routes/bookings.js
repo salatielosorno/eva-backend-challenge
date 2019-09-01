@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 /**
     * @api {get} /bookings?medication[]=:medication&mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page Get bookings by ConsumedMedications
+    * @apiDescription Este método permite obtener las citas en bloques de 1000 registros a la vez.
     * @apiGroup Bookings
     * @apiParam {String[]} medication Medicamento - Repetir estructura por cada medicamento
     * @apiParam {String="STRICT","LAX"} [mode=STRICT] Modo de consumo de medicamento
@@ -152,6 +153,7 @@ router.get('/', async function (req, res, next) {
 })
 /**
     * @api {get} /bookings?mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page Get all bookings
+    * @apiDescription Este método permite obtener las citas en bloques de 1000 registros a la vez.
     * @apiGroup Bookings
     * @apiParam {String="STRICT","LAX"} [mode=STRICT] Modo de consumo de medicamento
     * @apiParam {String} [clinic] Nombre de la clinica
