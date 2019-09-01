@@ -78,10 +78,125 @@ module.exports = class bookingsDAO {
                 ]
 
             const bookingsResult = await (await bookings.aggregate(pipeline)).next();
-            let total = bookingsResult.totales[0].totalRegisters;
 
-            const totalRegisters = total;
-            const totalpages = totalRegisters % perpages > 1 ? Math.floor(totalRegisters / perpages) + 1 : totalRegisters / perpages;
+            let total = 0;
+
+            if(bookingsResult.totales){
+                if(bookingsResult.totales[0])
+                {
+                    total = bookingsResult.totales[0].totalRegisters;
+                }
+            }
+
+            const totalRegisters = total == 0 ? 1 : total;
+
+            let totalPaginas;
+
+            if(totalRegisters == 1 || totalRegisters <= perpages)
+                totalPaginas = 1;
+            else
+                totalPaginas = totalRegisters % perpages > 1 ? Math.floor(totalRegisters / perpages) + 1 : totalRegisters / perpages;
+
+            const totalpages = totalPaginas;
+
+            return { bookings: bookingsResult.explorationsPerPage, total: totalRegisters, page: page, totalpages: totalpages }
+        } catch (error) {
+            console.error(`Ocurrio un problema al recuperar datos: ${error}`);
+            return { bookings: [], total: 0, page: 0, totalpages: 0 }
+        }
+    }
+
+    static async getBookingsByConsumedMedications(
+        medications = null,
+        filters = null,
+        page = 1,
+        perpages = 1000
+    ) {
+        try {
+
+            let skip = page == 1 ? 0 : (page - 1) * perpages;
+
+            const match = {
+                $match: filters
+            }
+            const lookup = {
+                '$lookup': {
+                    'from': 'explorations', 
+                    'localField': 'id', 
+                    'foreignField': 'bookingId', 
+                    'as': 'medication'
+                }
+            }
+            const addFieds = {
+                '$addFields': {
+                    'medication': '$medication.consumedMedications'
+                }
+            }
+            const unwind = {
+                '$unwind': {
+                    'path': '$medication'
+                }
+            }
+            const medicationsConsumed = {
+                $match: medications
+            }
+            const facet = {
+                '$facet': {
+                    'totales': [
+                        {
+                            '$count': 'totalRegisters'
+                        }
+                    ],
+                    'explorationsPerPage': [
+                        {
+                            '$skip': skip
+                        }, {
+                            '$limit': perpages
+                        }
+                    ]
+                }
+            }
+
+            let pipeline;
+            if (filters && medications)
+                pipeline = [
+                    match,
+                    lookup,
+                    addFieds,
+                    unwind,
+                    medicationsConsumed,
+                    facet
+                ];
+        
+            else   
+                pipeline = [
+                    lookup,
+                    addFieds,
+                    unwind,
+                    medicationsConsumed,
+                    facet
+                ];
+            const bookingsResult = await (await bookings.aggregate(pipeline)).next();
+
+            let total = 0;
+
+            if(bookingsResult.totales){
+                if(bookingsResult.totales[0])
+                {
+                    total = bookingsResult.totales[0].totalRegisters;
+                }
+            }
+
+            const totalRegisters = total == 0 ? 1 : total;
+
+            let totalPaginas;
+
+            if(totalRegisters == 1 || totalRegisters <= perpages)
+                totalPaginas = 1;
+            else
+                totalPaginas = totalRegisters % perpages > 1 ? Math.floor(totalRegisters / perpages) + 1 : totalRegisters / perpages;
+
+            const totalpages = totalPaginas;
 
             return { bookings: bookingsResult.explorationsPerPage, total: totalRegisters, page: page, totalpages: totalpages }
         } catch (error) {
