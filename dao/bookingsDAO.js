@@ -13,52 +13,75 @@ module.exports = class bookingsDAO {
         }
     }
 
-    static async getBookings(page = 1, perpages = 1000) {
+    static async getBookings(
+        filters = null,
+        page = 1,
+        perpages = 1000
+    ) {
         try {
 
-            let skip = page == 1 ? 0 : page * perpages;
+            let skip = page == 1 ? 0 : (page - 1) * perpages;
 
-            const pipeline = [
-                {
-                    '$lookup': {
-                        'from': 'explorations',
-                        'localField': 'id',
-                        'foreignField': 'bookingId',
-                        'as': 'bookings'
-                    }
-                }, {
-                    '$addFields': {
-                        'bookings': '$bookings.consumedMedications'
-                    }
-                }, {
-                    '$unwind': {
-                        'path': '$bookings'
-                    }
-                }, {
-                    '$facet': {
-                        'totales': [
-                            {
-                                '$count': 'totalRegisters'
-                            }
-                        ],
-                        'explorationsPerPage': [
-                            {
-                                '$skip': skip
-                            }, {
-                                '$limit': perpages
-                            }
-                        ]
-                    }
+            const match = {
+                $match: filters
+            }
+            const lookup = {
+                '$lookup': {
+                    'from': 'explorations',
+                    'localField': 'id',
+                    'foreignField': 'bookingId',
+                    'as': 'bookings'
                 }
-            ]
+            }
+            const addFieds = {
+                '$addFields': {
+                    'bookings': '$bookings.consumedMedications'
+                }
+            }
+            const unwind = {
+                '$unwind': {
+                    'path': '$bookings'
+                }
+            }
+            const facet = {
+                '$facet': {
+                    'totales': [
+                        {
+                            '$count': 'totalRegisters'
+                        }
+                    ],
+                    'explorationsPerPage': [
+                        {
+                            '$skip': skip
+                        }, {
+                            '$limit': perpages
+                        }
+                    ]
+                }
+            }
+
+            let pipeline;
+            if (filters)
+                pipeline = [
+                    match,
+                    lookup,
+                    addFieds,
+                    unwind,
+                    facet
+                ]
+            else
+                pipeline = [
+                    lookup,
+                    addFieds,
+                    unwind,
+                    facet
+                ]
 
             const bookingsResult = await (await bookings.aggregate(pipeline)).next();
-            let total = await bookings.countDocuments();
+            let total = bookingsResult.totales[0].totalRegisters;
 
             const totalRegisters = total;
-            const totalpages = totalRegisters / perpages;
-
-            //console.log(await bookingsResult)
+            const totalpages = totalRegisters % perpages > 1 ? Math.floor(totalRegisters / perpages) + 1 : totalRegisters / perpages;
 
             return { bookings: bookingsResult.explorationsPerPage, total: totalRegisters, page: page, totalpages: totalpages }
         } catch (error) {
