@@ -3,20 +3,19 @@ var express = require('express');
 var router = express.Router();
 /**
     * @api {get} /bookings?medication[]=:medication&mode=:mode&clinic=:clinic&frametime[start]=:startframetime&frametime[end]=:endframetime&page=:page&perpage=:perpage Get bookings
-    * @apiDescription Permite listado de citas. Esta estructura no exige ningún parámetro como obligatorio.
+    * @apiDescription Permite listado de citas.
     * @apiGroup Bookings
     * @apiVersion 1.0.0
     * @apiParam {String[]} [medication] Medicamento - Repetir estructura por cada medicamento
     * @apiParam {String="STRICT","LAX"} [mode=STRICT] Modo de consumo de medicamento
     * @apiParam {String} [clinic] Nombre de la clinica
-    * @apiParam {String} [startframetime] Fecha de inicio en formato ISO 8601
-    * @apiParam {String} [endframetime] Fecha de fin en formato ISO 8601
+    * @apiParam {String[]} [frametime] Fecha - [start] Inicio [end] Final
     * @apiParam {Number} [page=1] Página
     * @apiParam {Number} [perpage=1000] Registros por página
     * @apiExample {curl} Example:
-    *   GET /bookings?mode=LAX&clinic=EXPLANADA&medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS
+    *   GET /bookings?mode=LAX&clinic=EXPLANADA&medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z
     * @apiExample {curl} Example using pagination:
-    *   GET /bookings?mode=LAX&clinic=EXPLANADA&medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&page=10&perpage=500
+    *   GET /bookings?mode=LAX&clinic=EXPLANADA&medication[]=HORMONE_THERAPY&medication[]=ANTIBIOTICS&medication[]=BLOOD_THINNERS&medication[]=VITAMINS&medication[]=COAGULANTS&frametime[start]=2019-11-27T01:19:51.813Z&frametime[end]=2019-11-28T01:19:51.813Z&page=2&perpage=100
     * @apiSuccess (201) {Object[]} Bookings Lista de citas
     * @apiSuccess (201) {String}    Booking.name Nombre completo del cliente
     * @apiSuccess (201) {String}    Booking.email  Email del cliente
