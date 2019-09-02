@@ -1,7 +1,7 @@
 {
-  "name": "endpoint",
+  "name": "eva-backend-challenge",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is an API Rest to resolve a backend challenge",
   "apidoc": {
     "title": "API Rest EVA - NodeJS",
     "url": "https://api.github.com/v1",
@@ -20,6 +20,14 @@
     "test": "mocha --timeout=100000",
     "doc": "./node_modules/.bin/apidoc -i routes/ -o apidoc"
   },
+  "repository": {
+
+    "type": "git",
+
+    "url": "git+https://github.com/salatielosorno/eva-backend-challenge.git"
+
+  },
+  "author": "Salatiel Osorno Linares",
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",

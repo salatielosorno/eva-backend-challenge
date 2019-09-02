@@ -16,7 +16,7 @@ REQUIREMENTS
 
 ## Solution
 
-This is my solution to cover the requirements.
+This is my solution to resolve the backend challenge.
 
 ## Running API
 
