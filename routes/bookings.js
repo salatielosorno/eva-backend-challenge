@@ -52,61 +52,40 @@ var router = express.Router();
  *     ]
     */
 router.get('/', async function (req, res, next) {
-    let match = null
-    let matchMedications = null;
+    let filters = {}
+    let medication = {}
 
-    if (!req.query.clinic || !req.query.frametime || !req.query.medication)
-        return next('route')
-
-    if (!req.query.frametime.start || !req.query.frametime.end)
-        return res.status(400).json({ message: "Petición mal formada." })
-
-    match = {
-        clinicName: req.query.clinic,
-        'datetime': {
-            '$gte': req.query.frametime.start,
-            '$lt': req.query.frametime.end
-        }
-    };
-
-    matchMedications = getMedicationConsumed(req.query.mode, req.query.medication);
-
-    let perpage = 1000;
-
-    if(req.query.perpage)
-        perpage = req.query.perpage;
-
-    let response;
-
-    if (req.query.page)
-        response = await bookingsDAO.getBookings(matchMedications, match, req.query.page, perpage);
+    if(req.query.clinic)
+        filters.clinicName = req.query.clinic
+    if(req.query.frametime)
+        if(!req.query.frametime.start || !req.query.frametime.end)
+            return res.status(400).json({ message: "Petición mal formada." })
+        else
+            filters.datetime = {
+                '$gte': req.query.frametime.start,
+                '$lt': req.query.frametime.end
+            }
+    
+    if(req.query.mode)
+        if(req.query.mode != "LAX" && req.query.mode != "STRICT")
+            return res.status(400).json({ message: "Petición mal formada." })
+    
+    if(req.query.medication)
+        medication = getMedicationConsumed(req.query.mode, req.query.medication);
+    
+    if(Object.keys(filters).length === 0 && filters.constructor === Object)
+        req.filters = null;
     else
-        response = await bookingsDAO.getBookings(matchMedications, match);
+        req.filters = filters;
+    
+    if(Object.keys(medication).length === 0 && medication.constructor === Object)
+        req.medication = null;
+    else
+        req.medication = medication;
 
-    res.append('eva-total', response.total);
-    res.append('eva-pages', response.totalpages);
-    res.append('eva-page', response.page);
-    res.status(201).json(response.bookings);
+    next();
 })
 router.get('/', async function (req, res, next) {
-    let match = null
-    let matchMedications = null;
-
-    if (!req.query.frametime || !req.query.medication)
-        return next('route')
-
-    if (!req.query.frametime.start || !req.query.frametime.end)
-        return res.status(400).json({ message: "Petición mal formada." })
-
-    match = {
-        'datetime': {
-            '$gte': req.query.frametime.start,
-            '$lt': req.query.frametime.end
-        }
-    };
-
-    matchMedications = getMedicationConsumed(req.query.mode, req.query.medication);
-
     let perpage = 1000;
 
     if(req.query.perpage)
@@ -115,176 +94,13 @@ router.get('/', async function (req, res, next) {
     let response;
 
     if (req.query.page)
-        response = await bookingsDAO.getBookings(matchMedications, match, req.query.page, perpage);
+        response = await bookingsDAO.getBookings(req.medication, req.filters, req.query.page, perpage);
     else
-        response = await bookingsDAO.getBookings(matchMedications, match);
+        response = await bookingsDAO.getBookings(req.medication, req.filters);
 
     res.append('eva-total', response.total);
     res.append('eva-pages', response.totalpages);
     res.append('eva-page', response.page);
-    res.status(201).json(response.bookings);
-})
-router.get('/', async function (req, res, next) {
-    let match = null
-    let matchMedications = null;
-
-    if (!req.query.clinic || !req.query.medication)
-        return next('route')
-
-    match = {
-        clinicName: req.query.clinic
-    };
-
-    matchMedications = getMedicationConsumed(req.query.mode, req.query.medication);
-
-    let perpage = 1000;
-
-    if(req.query.perpage)
-        perpage = req.query.perpage;
-
-    let response;
-
-    if (req.query.page)
-        response = await bookingsDAO.getBookings(matchMedications, match, req.query.page, perpage);
-    else
-        response = await bookingsDAO.getBookings(matchMedications, match);
-
-    res.append('eva-total', response.total);
-    res.append('eva-pages', response.totalpages);
-    res.append('eva-page', response.page);
-    res.status(201).json(response.bookings);
-})
-router.get('/', async function (req, res, next) {
-    let matchMedications = null;
-
-    if (!req.query.medication)
-        return next('route');
-
-    matchMedications = getMedicationConsumed(req.query.mode, req.query.medication);
-
-    let perpage = 1000;
-
-    if(req.query.perpage)
-        perpage = req.query.perpage;
-
-    let response;
-
-    if (req.query.page)
-        response = await bookingsDAO.getBookings(matchMedications, null, req.query.page, perpage);
-    else
-        response = await bookingsDAO.getBookings(matchMedications);
-
-    res.append('eva-total', response.total);
-    res.append('eva-pages', response.totalpages);
-    res.append('eva-page', response.page);
-    res.status(201).json(response.bookings);
-})
-router.get('/', async function (req, res, next) {
-    let match = null;
-    if (!req.query.clinic || !req.query.frametime) return next('route')
-
-    if (!req.query.frametime.start || !req.query.frametime.end)
-        return res.status(400).json({ message: "Petición mal formada." })
-
-    match = {
-        clinicName: req.query.clinic,
-        'datetime': {
-            '$gte': req.query.frametime.start,
-            '$lt': req.query.frametime.end
-        }
-    };
-
-    let perpage = 1000;
-
-    if(req.query.perpage)
-        perpage = req.query.perpage;
-
-    let response;
-
-    if (req.query.page)
-        response = await bookingsDAO.getBookings(null, match, req.query.page, perpage);
-    else
-        response = await bookingsDAO.getBookings(null, match);
-    res.append('eva-total', response.total);
-    res.append('eva-pages', response.totalpages);
-    res.append('eva-page', response.page);
-    res.status(201).json(response.bookings);
-})
-router.get('/', async function (req, res, next) {
-    let match = null;
-    if (!req.query.clinic) return next('route')
-
-    match = { clinicName: req.query.clinic };
-
-    let perpage = 1000;
-
-    if(req.query.perpage)
-        perpage = req.query.perpage;
-
-    let response;
-
-    if (req.query.page)
-        response = await bookingsDAO.getBookings(null, match, req.query.page, perpage);
-    else
-        response = await bookingsDAO.getBookings(null, match);
-
-    res.append('eva-total', response.total);
-    res.append('eva-pages', response.totalpages);
-    res.append('eva-page', response.page);
-
-    res.status(201).json(response.bookings);
-})
-router.get('/', async function (req, res, next) {
-    let match = null;
-
-    if (!req.query.frametime) return next('route');
-
-    if (!req.query.frametime.start || !req.query.frametime.end)
-        return res.status(400).json({ message: "Petición mal formada." })
-
-    match = {
-        'datetime': {
-            '$gte': req.query.frametime.start,
-            '$lt': req.query.frametime.end
-        }
-    };
-
-    let perpage = 1000;
-
-    if(req.query.perpage)
-        perpage = req.query.perpage;
-
-    let response;
-
-    if (req.query.page)
-        response = await bookingsDAO.getBookings(null, match, req.query.page, perpage);
-    else
-        response = await bookingsDAO.getBookings(null, match);
-
-    res.append('eva-total', response.total);
-    res.append('eva-pages', response.totalpages);
-    res.append('eva-page', response.page);
-
-    res.status(201).json(response.bookings);
-})
-router.get('/', async function (req, res, next) {
-
-    let perpage = 1000;
-
-    if(req.query.perpage)
-        perpage = req.query.perpage;
-
-    let response;
-
-    if (req.query.page)
-        response = await bookingsDAO.getBookings(null, null, req.query.page, perpage);
-    else
-        response = await bookingsDAO.getBookings();
-
-    res.append('eva-total', response.total);
-    res.append('eva-pages', response.totalpages);
-    res.append('eva-page', response.page);
-
     res.status(201).json(response.bookings);
 })
 
